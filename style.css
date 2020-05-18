@@ -1,0 +1,31 @@
+.synth {
+  width: 500px;
+  background: blue;
+}
+
+.sequencer {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: (1fr)[8];
+      grid-template-columns: repeat(8, 1fr);
+}
+
+.sequencer__step {
+  border: 5px solid black;
+  border-radius: 10px;
+  background: black;
+}
+
+.sequencer__step select {
+  width: 100%;
+}
+
+.sequencer .selected-step {
+  border-color: white;
+}
+
+.octave-input {
+  -moz-appearance: textfield;
+  max-width: 10px;
+}
+/*# sourceMappingURL=style.css.map */

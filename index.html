@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Document</title>
+</head>
+
+<body>
+  <section id="synthesizer" class='synth'>
+    <div id="settingsBar">
+      <div id="left">
+
+      </div>
+      <div id="right">
+        <h2>Oscillator 1</h2>
+        <form id="osc1_waves">
+          <input type="radio" id="sine" name="osc1_waves" value="sine" />
+          <label for="sine">Sine</label>
+          <input type="radio" id="square" name="osc1_waves" value="square" />
+          <label for="square">Square</label>
+          <input type="radio" id="triangle" name="osc1_waves" value="triangle" />
+          <label for="triangle">Triangle</label>
+          <input type="radio" id="sawtooth" name="osc1_waves" value="sawtooth" />
+          <label for="sawtooth">Sawtooth</label>
+        </form>
+        <h2>Oscillator 2</h2>
+        <form id="osc2_waves">
+          <input type="radio" id="sine" name="osc2_waves" value="sine" />
+          <label for="sine">Sine</label>
+          <input type="radio" id="square" name="osc2_waves" value="square" />
+          <label for="square">Square</label>
+          <input type="radio" id="triangle" name="osc2_waves" value="triangle" />
+          <label for="triangle">Triangle</label>
+          <input type="radio" id="sawtooth" name="osc2_waves" value="sawtooth" />
+          <label for="sawtooth">Sawtooth</label>
+        </form>
+        <div>
+          <span id="bpmVisual"></span>
+          <input type="range" id="bpmInput" name="bpm" min="60" max="190">
+          <label for="bpm">Bpm</label>
+        </div>
+        <div>
+          <span id="volumeVisual"></span>
+          <input type="range" id="volumeInput" name="volume" min="0" max="10">
+          <label for="volume">Volume</label>
+        </div>
+      </div>
+    </div>
+    <button id="playBtn" class="play-btn">
+      Play
+    </button>
+    <button id="stopBtn" class="stop-btn">Stop</button>
+    <div id="sequencer" class="sequencer">
+
+    </div>
+  </section>
+  <script src="tones.js"></script>
+  <script src="synthesizer.js"></script>
+</body>
+
+</html>
