@@ -1,4 +1,4 @@
-const sequencer = document.querySelector("#sequencer");
+const sequencerWrapper = document.querySelector("#sequencerWrapper");
 const playBtn = document.querySelector("#playBtn");
 const bpmInput = document.querySelector("#bpmInput");
 const bpmVisual = document.querySelector("#bpmVisual");
@@ -6,7 +6,7 @@ const volumeInput = document.querySelector("#volumeInput");
 const volumeVisual = document.querySelector("#volumeVisual");
 let sequencerIsPlaying = false;
 const firstStepIndex = 0;
-const lastStepIndex = 16;
+const lastStepIndex = 15;
 const ctx = new (window.AudioContext || window.webkitAudioContext)();
 let synthDelay = ctx.createDelay();
 synthDelay.delayTime.setValueAtTime(0.2, ctx.currentTime);
@@ -23,38 +23,60 @@ let volume = 0.1;
 _gainNode.gain.value = volume;
 volumeVisual.innerHTML = volume * 10;
 
+function drawSequencer() {
+  let sequencerHead = document.createElement("div");
+  sequencerHead.setAttribute("id", "sequencerHead");
+  sequencerHead.classList.add("sequencer__head");
+  let patternNameInput = document.createElement('input');
+  patternNameInput.setAttribute('name', "patternNameInput");
+  patternNameInput.setAttribute('id', "patternNameInput");
+  patternNameInput.setAttribute('placeholder', "New pattern");
+  sequencerHead.appendChild(patternNameInput);
+  sequencerWrapper.appendChild(sequencerHead);
 
+  let sequencer = document.createElement('div');
+  sequencer.classList.add("sequencer");
+  sequencer.setAttribute("id", "sequencer");
 
-for (let i = 0; i < 16; i++) {
-  let stepWrapper = document.createElement("div");
-  stepWrapper.setAttribute('id', `stepWrapper${i}`);
-  stepWrapper.setAttribute('name', `stepWrapper${i}`);
-  stepWrapper.classList.add('sequencer__step');
-  let toneSelect = document.createElement("select");
-  toneSelect.setAttribute('id', `toneSelect${i}`);
-  toneSelect.classList.add("tone-select");
-  let noToneOption = document.createElement("option");
-  noToneOption.setAttribute('value', "");
-  toneSelect.appendChild(noToneOption);
-  tones.forEach(tone => {
-    let option = document.createElement("option");
-    option.setAttribute('value', tone.toneName);
-    option.innerHTML = tone.toneName;
-    toneSelect.appendChild(option);
-  });
-  let octaveInput = document.createElement('input');
-  octaveInput.setAttribute("type", "number");
-  octaveInput.setAttribute("id", `octaveInput${i}`);
-  octaveInput.setAttribute("name", `octaveInput${i}`);
-  octaveInput.setAttribute("min", "1");
-  octaveInput.setAttribute("max", "5");
-  octaveInput.value = 3;
-  console.log(octaveInput.innerHTML)
-  octaveInput.classList.add("octave-input");
-  stepWrapper.appendChild(toneSelect);
-  stepWrapper.appendChild(octaveInput)
-  sequencer.appendChild(stepWrapper);
+  for (let i = 0; i < 16; i++) {
+    let stepWrapper = document.createElement("div");
+    stepWrapper.setAttribute('id', `stepWrapper${i}`);
+    stepWrapper.setAttribute('name', `stepWrapper${i}`);
+    stepWrapper.classList.add('sequencer__step');
+    let toneSelect = document.createElement("select");
+    toneSelect.setAttribute('id', `toneSelect${i}`);
+    toneSelect.classList.add("tone-select");
+    let noToneOption = document.createElement("option");
+    noToneOption.setAttribute('value', "");
+    toneSelect.appendChild(noToneOption);
+    let holdToneOption = document.createElement("option");
+    holdToneOption.setAttribute('value', "-->");
+    holdToneOption.innerHTML = "-->"
+    toneSelect.appendChild(holdToneOption);
+    tones.forEach(tone => {
+      let option = document.createElement("option");
+      option.setAttribute('value', tone.toneName);
+      option.innerHTML = tone.toneName;
+      toneSelect.appendChild(option);
+    });
+    let octaveInput = document.createElement('input');
+    octaveInput.setAttribute("type", "number");
+    octaveInput.setAttribute("id", `octaveInput${i}`);
+    octaveInput.setAttribute("name", `octaveInput${i}`);
+    octaveInput.setAttribute("min", "1");
+    octaveInput.setAttribute("max", "5");
+    octaveInput.value = 3;
+    octaveInput.classList.add("octave-input");
+    stepWrapper.appendChild(toneSelect);
+    stepWrapper.appendChild(octaveInput)
+    sequencer.appendChild(stepWrapper);
+  }
+  sequencerWrapper.appendChild(sequencer);
 }
+drawSequencer();
+
+
+
 
 let steps = document.querySelectorAll(".sequencer__step");
 
@@ -89,8 +111,6 @@ bpmInput.addEventListener("input", (e) => {
 volumeInput.addEventListener("input", (e) => {
   volume = parseFloat(e.target.value) / 10;
   volumeVisual.innerHTML = parseFloat(e.target.value);
-  console.log(volumeVisual.innerHTML)
-  console.log('hej')
 })
 
 function runSequencer() {
@@ -103,21 +123,26 @@ function runSequencer() {
       clearTimeout(myTimeout);
     } else {
       if (stepIndex == lastStepIndex) {
-        stopNote();
         let previousStep = stepIndex - 1;
+        if (steps[stepIndex].firstChild.value !== "-->") {
+          stopNote();
+        }
         steps[previousStep].classList.remove('selected-step');
-        stepIndex = 0;
         steps[stepIndex].classList.add('selected-step');
         let selectedTone = steps[stepIndex].firstChild.value;
         let selectedOctave = parseFloat(steps[stepIndex].lastChild.value);
         getTone(tones, selectedTone, selectedOctave);
-        stepIndex++;
+        stepIndex = 0;
+        // stepIndex++;
       } else {
-        if (stepIndex > 0) {
+        if (steps[stepIndex].firstChild.value !== "-->") {
           stopNote();
+        }
+        if (stepIndex > 0) {
           let previousStep = stepIndex - 1;
           steps[previousStep].classList.remove('selected-step');
         }
+        steps[lastStepIndex].classList.remove('selected-step');
         steps[stepIndex].classList.add('selected-step');
         let selectedTone = steps[stepIndex].firstChild.value;
         let selectedOctave = parseFloat(steps[stepIndex].lastChild.value);
@@ -139,8 +164,6 @@ const getTone = (data, selectedTone, selectedOctave) => {
 };
 
 function playNote(chosenTone, octave) {
-  console.log(octave)
-  console.log(parseFloat(chosenTone["freq"]) * Math.pow(2, (octave - 1)))
   if (ctx.state !== "running") {
     ctx.resume()
   }
