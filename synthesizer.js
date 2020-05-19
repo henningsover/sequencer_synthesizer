@@ -23,16 +23,37 @@ let volume = 0.1;
 _gainNode.gain.value = volume;
 volumeVisual.innerHTML = volume * 10;
 
+
+
 function drawSequencer() {
   let sequencerHead = document.createElement("div");
   sequencerHead.setAttribute("id", "sequencerHead");
   sequencerHead.classList.add("sequencer__head");
+
+  let patternSelect = document.createElement('select');
+  patternSelect.setAttribute('name', "patternSelect");
+  patternSelect.setAttribute('id', "patternSelect");
+  patternSelect.classList.add('pattern-select');
+
+  let createNewBtn = document.createElement('button');
+  createNewBtn.setAttribute('id', "createNewBtn");
+  createNewBtn.classList.add('create-new-btn');
+  createNewBtn.innerHTML = "Create new pattern";
+  createNewBtn.addEventListener("click", () => {
+    sequencerWrapper.innerHTML = "";
+    drawSequencer();
+  })
+
+  sequencerHead.appendChild(patternSelect);
+  sequencerHead.appendChild(createNewBtn);
+  sequencerWrapper.appendChild(sequencerHead);
+
   let patternNameInput = document.createElement('input');
   patternNameInput.setAttribute('name', "patternNameInput");
   patternNameInput.setAttribute('id', "patternNameInput");
   patternNameInput.setAttribute('placeholder', "New pattern");
-  sequencerHead.appendChild(patternNameInput);
-  sequencerWrapper.appendChild(sequencerHead);
+  sequencerWrapper.appendChild(patternNameInput);
+
 
   let sequencer = document.createElement('div');
   sequencer.classList.add("sequencer");
