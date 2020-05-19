@@ -40,7 +40,14 @@
 
 .octave-input {
   -moz-appearance: textfield;
+  -webkit-appearance: textfield;
   max-width: 15px;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .sequencer__head {
@@ -65,5 +72,9 @@
   display: flex;
   -ms-flex-pack: distribute;
       justify-content: space-around;
+}
+
+.effect-visuals {
+  display: block;
 }
 /*# sourceMappingURL=style.css.map */

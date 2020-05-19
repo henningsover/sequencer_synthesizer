@@ -4,32 +4,52 @@ const bpmInput = document.querySelector("#bpmInput");
 const bpmVisual = document.querySelector("#bpmVisual");
 const volumeInput = document.querySelector("#volumeInput");
 const volumeVisual = document.querySelector("#volumeVisual");
+const filterFrequencyInput = document.querySelector("#filterFrequencyInput");
+const filterFrequencyVisual = document.querySelector("#filterFrequencyVisual");
+const filterQInput = document.querySelector("#filterQInput");
+const filterQVisual = document.querySelector("#filterQVisual");
+
 let sequencerIsPlaying = false;
 let patternToDraw = null;
+
 const firstStepIndex = 0;
 const lastStepIndex = 15;
+
 const ctx = new (window.AudioContext || window.webkitAudioContext)();
 let synthDelay = ctx.createDelay();
 synthDelay.delayTime.setValueAtTime(0.2, ctx.currentTime);
 let stepIndex = 0;
 let osc1;
 let osc2;
+
+const filter = ctx.createBiquadFilter();
+let filterFrequency = 1000;
+let filterQValue = 10;
+filter.type = "lowpass";
+filter.frequency.value = filterFrequency;
+filter.Q.value = filterQValue
+filterFrequencyInput.value = filterFrequency
+filterFrequencyVisual.innerHTML = filterFrequency
+filterQInput.value = filterQValue;
+filterQVisual.value = filterQValue;
+
+const _gainNode = ctx.createGain();
+let volume = 0.1;
+_gainNode.gain.value = volume;
+volumeVisual.innerHTML = volume * 10;
+
 let bpm = 120;
 const minuteInMs = 60000;
 let bpmInMs = minuteInMs / bpm;
 bpmInput.value = bpm;
 bpmVisual.innerHTML = bpm
-const _gainNode = ctx.createGain();
-let volume = 0.1;
-_gainNode.gain.value = volume;
-volumeVisual.innerHTML = volume * 10;
+
 
 const getPatterns = () => {
   patterns = JSON.parse(localStorage.getItem("patterns"));
   !patterns ? (patterns = {}) : null;
 }
 getPatterns();
-console.log(patterns)
 
 function isEmpty(obj) {
   for (var key in obj) {
@@ -185,6 +205,7 @@ document.addEventListener("click", (e) => {
     if (sequencerIsPlaying == true) {
       sequencerIsPlaying = false;
       stopNote();
+      disconnectEffects();
     }
     else {
       console.log('playing');
@@ -227,8 +248,16 @@ bpmInput.addEventListener("input", (e) => {
   bpmVisual.innerHTML = bpm;
 })
 volumeInput.addEventListener("input", (e) => {
-  volume = parseFloat(e.target.value) / 10;
+  volume = parseFloat(e.target.value) / 100;
   volumeVisual.innerHTML = parseFloat(e.target.value);
+})
+filterFrequencyInput.addEventListener("input", (e) => {
+  filterFrequency = parseInt(e.target.value);
+  filterFrequencyVisual.innerHTML = filterFrequency;
+})
+filterQInput.addEventListener("input", (e) => {
+  filterQValue = parseInt(e.target.value);
+  filterQVisual.innerHTML = filterQValue;
 })
 
 function runSequencer() {
@@ -298,12 +327,15 @@ function playNote(chosenTone, octave) {
   osc2.frequency.value = toneFrequency;
   osc2.detune.value = 10;
   _gainNode.gain.value = volume;
+  filter.frequency.value = filterFrequency
+  filter.Q.value = filterQValue;
 
+  osc1.connect(filter);
+  osc2.connect(filter);
+  filter.connect(_gainNode);
+  _gainNode.connect(ctx.destination);
   osc1.start(0);
   osc2.start(0);
-  osc1.connect(_gainNode);
-  osc2.connect(_gainNode);
-  _gainNode.connect(ctx.destination);
 }
 
 const getBpm = () => {
@@ -314,14 +346,23 @@ const getBpm = () => {
 
 const stopNote = () => {
   if (typeof osc1 !== "undefined" && typeof osc2 !== "undefined") {
-    osc1.disconnect();
-    osc2.disconnect();
+    osc1.stop(0);
+    osc2.stop(0);
+  }
+}
+
+const disconnectEffects = () => {
+  if (typeof osc1 !== "undefined" && typeof osc2 !== "undefined") {
+    osc1.stop(0);
+    osc2.stop(0);
+    osc1.disconnect(0)
+    osc2.disconnect(0);
+    filter.disconnect(0);
+    _gainNode.disconnect(0);
   }
 }
 
 const savePattern = (patternName, stepsList) => {
-  console.log(stepsList[0].firstChild.value)
-
   let patternToAdd = {};
   for (let i = 0; i < stepsList.length; i++) {
     let toneToAdd = stepsList[i].firstChild.value;
@@ -339,7 +380,6 @@ const savePattern = (patternName, stepsList) => {
   localStorage.setItem("patterns", JSON.stringify(patterns));
   patternToDraw = null;
   drawSequencer();
-  console.log("drew sequencer")
 }
 const deletePattern = (patternToDelete) => {
   delete patterns[patternToDelete]
