@@ -23,9 +23,24 @@ let volume = 0.1;
 _gainNode.gain.value = volume;
 volumeVisual.innerHTML = volume * 10;
 
+const getPatterns = () => {
+  patterns = JSON.parse(localStorage.getItem("patterns"));
+  !patterns ? (patterns = {}) : null;
+}
+getPatterns();
+console.log(patterns)
+
+function isEmpty(obj) {
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key))
+      return false;
+  }
+  return true;
+}
 
 
 function drawSequencer() {
+  sequencerWrapper.innerHTML = "";
   let sequencerHead = document.createElement("div");
   sequencerHead.setAttribute("id", "sequencerHead");
   sequencerHead.classList.add("sequencer__head");
@@ -33,6 +48,20 @@ function drawSequencer() {
   let patternSelect = document.createElement('select');
   patternSelect.setAttribute('name', "patternSelect");
   patternSelect.setAttribute('id', "patternSelect");
+  let patternSelectDefault = document.createElement('option');
+  patternSelectDefault.setAttribute('value', "default");
+  patternSelectDefault.innerHTML = "Select a pattern";
+  patternSelectDefault.setAttribute('selected', "selected");
+  patternSelect.appendChild(patternSelectDefault);
+  if (isEmpty(patterns)) {
+  } else {
+    Object.keys(patterns).forEach((item) => {
+      let patternOption = document.createElement('option');
+      patternOption.setAttribute('value', item);
+      patternOption.innerHTML = item;
+      patternSelect.appendChild(patternOption);
+    })
+  }
   patternSelect.classList.add('pattern-select');
 
   let createNewBtn = document.createElement('button');
@@ -40,7 +69,6 @@ function drawSequencer() {
   createNewBtn.classList.add('create-new-btn');
   createNewBtn.innerHTML = "Create new pattern";
   createNewBtn.addEventListener("click", () => {
-    sequencerWrapper.innerHTML = "";
     drawSequencer();
   })
 
@@ -69,6 +97,7 @@ function drawSequencer() {
     toneSelect.classList.add("tone-select");
     let noToneOption = document.createElement("option");
     noToneOption.setAttribute('value', "");
+    noToneOption.setAttribute('selected', 'selected')
     toneSelect.appendChild(noToneOption);
     let holdToneOption = document.createElement("option");
     holdToneOption.setAttribute('value', "-->");
@@ -93,13 +122,23 @@ function drawSequencer() {
     sequencer.appendChild(stepWrapper);
   }
   sequencerWrapper.appendChild(sequencer);
+  let managePatternsBtns = document.createElement('div');
+  managePatternsBtns.classList.add('manage-pattern-btns');
+
+  let saveBtn = document.createElement('button');
+  saveBtn.classList.add('save-btn');
+  saveBtn.innerHTML = "Save";
+  let delBtn = document.createElement('button');
+  delBtn.classList.add('del-btn');
+  delBtn.innerHTML = "Delete";
+  managePatternsBtns.appendChild(saveBtn);
+  managePatternsBtns.appendChild(delBtn);
+  sequencerWrapper.appendChild(managePatternsBtns);
 }
 drawSequencer();
 
-
-
-
 let steps = document.querySelectorAll(".sequencer__step");
+console.log(steps);
 
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("play-btn")) {
@@ -122,6 +161,20 @@ document.addEventListener("click", (e) => {
     }
     else {
       console.log('playing');
+    }
+  }
+})
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains('save-btn')) {
+    let patternName = document.querySelector('#patternNameInput').value;
+    if (patternName == "") {
+      alert("Please enter a name for this pattern")
+    } else if (Object.keys(patterns).includes(patternName)) {
+      let shouldSave = confirm("Pattern name already exist, do you want to overwrite pattern?")
+      if (shouldSave) { savePattern(patternName, steps) };
+    }
+    else {
+      savePattern(patternName, steps);
     }
   }
 })
@@ -219,5 +272,28 @@ const stopNote = () => {
     osc1.disconnect();
     osc2.disconnect();
   }
+}
+
+const savePattern = (patternName, stepsList) => {
+  console.log(stepsList[0].firstChild.value)
+
+  let patternToAdd = {};
+  for (let i = 0; i < stepsList.length; i++) {
+    let toneToAdd = stepsList[i].firstChild.value;
+    let octaveToAdd = stepsList[i].lastChild.value
+    let stepName = i < 10 ? "step0" + i : "step" + i;
+    patternToAdd = {
+      ...patternToAdd,
+      [stepName]: {
+        toneName: toneToAdd,
+        octave: octaveToAdd
+      }
+    }
+  }
+  patterns[patternName] = patternToAdd;
+  localStorage.setItem("patterns", JSON.stringify(patterns));
+
+  drawSequencer();
+  console.log("drew sequencer")
 }
 
