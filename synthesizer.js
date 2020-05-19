@@ -5,6 +5,7 @@ const bpmVisual = document.querySelector("#bpmVisual");
 const volumeInput = document.querySelector("#volumeInput");
 const volumeVisual = document.querySelector("#volumeVisual");
 let sequencerIsPlaying = false;
+let patternToDraw = null;
 const firstStepIndex = 0;
 const lastStepIndex = 15;
 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -40,6 +41,10 @@ function isEmpty(obj) {
 
 
 function drawSequencer() {
+  // if ()
+  // // let oldSequencer = document.getElementById(sequencer);
+  // // console.log(oldSequencer);
+  // // sequencerWrapper.removeChild(oldSequencer)
   sequencerWrapper.innerHTML = "";
   let sequencerHead = document.createElement("div");
   sequencerHead.setAttribute("id", "sequencerHead");
@@ -48,6 +53,7 @@ function drawSequencer() {
   let patternSelect = document.createElement('select');
   patternSelect.setAttribute('name', "patternSelect");
   patternSelect.setAttribute('id', "patternSelect");
+  patternSelect.classList.add('pattern-select');
   let patternSelectDefault = document.createElement('option');
   patternSelectDefault.setAttribute('value', "default");
   patternSelectDefault.innerHTML = "Select a pattern";
@@ -69,6 +75,8 @@ function drawSequencer() {
   createNewBtn.classList.add('create-new-btn');
   createNewBtn.innerHTML = "Create new pattern";
   createNewBtn.addEventListener("click", () => {
+    patternToDraw = null;
+
     drawSequencer();
   })
 
@@ -80,6 +88,9 @@ function drawSequencer() {
   patternNameInput.setAttribute('name', "patternNameInput");
   patternNameInput.setAttribute('id', "patternNameInput");
   patternNameInput.setAttribute('placeholder', "New pattern");
+  if (patternToDraw !== null) {
+    patternNameInput.value = patternToDraw;
+  }
   sequencerWrapper.appendChild(patternNameInput);
 
 
@@ -106,6 +117,7 @@ function drawSequencer() {
     tones.forEach(tone => {
       let option = document.createElement("option");
       option.setAttribute('value', tone.toneName);
+      option.classList.add('tone-option')
       option.innerHTML = tone.toneName;
       toneSelect.appendChild(option);
     });
@@ -134,11 +146,26 @@ function drawSequencer() {
   managePatternsBtns.appendChild(saveBtn);
   managePatternsBtns.appendChild(delBtn);
   sequencerWrapper.appendChild(managePatternsBtns);
+  if (patternToDraw !== null) {
+    setPatternValues();
+  }
 }
 drawSequencer();
 
-let steps = document.querySelectorAll(".sequencer__step");
-console.log(steps);
+function setPatternValues() {
+  let steps = document.querySelectorAll(".sequencer__step");
+  if (patternToDraw !== null) {
+    for (let i = 0; i < steps.length; i++) {
+      let toneSelect = steps[i].firstChild;
+      let octaveInput = steps[i].lastChild;
+      let stepName = i < 10 ? "step0" + i : "step" + i;
+      toneNameToSet = patterns[patternToDraw][stepName].toneName
+      octaveToSet = patterns[patternToDraw][stepName].octave
+      toneSelect.value = toneNameToSet;
+      octaveInput.value = octaveToSet;
+    }
+  }
+}
 
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("play-btn")) {
@@ -167,6 +194,7 @@ document.addEventListener("click", (e) => {
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains('save-btn')) {
     let patternName = document.querySelector('#patternNameInput').value;
+    let steps = document.querySelectorAll(".sequencer__step");
     if (patternName == "") {
       alert("Please enter a name for this pattern")
     } else if (Object.keys(patterns).includes(patternName)) {
@@ -176,6 +204,22 @@ document.addEventListener("click", (e) => {
     else {
       savePattern(patternName, steps);
     }
+  }
+})
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains('del-btn')) {
+    if (patternToDraw !== null) {
+      let shouldDelete = confirm("Do you really want to delete this pattern?")
+      if (shouldDelete) {
+        deletePattern(patternToDraw);
+      }
+    }
+  }
+})
+document.addEventListener("change", (e) => {
+  if (e.target.classList.contains('pattern-select')) {
+    patternToDraw = e.target.value;
+    drawSequencer();
   }
 })
 bpmInput.addEventListener("input", (e) => {
@@ -188,6 +232,7 @@ volumeInput.addEventListener("input", (e) => {
 })
 
 function runSequencer() {
+  let steps = document.querySelectorAll(".sequencer__step");
   let toneDuration = getBpm();
   let myTimeout = setTimeout(function () {
     if (sequencerIsPlaying !== true) {
@@ -292,8 +337,14 @@ const savePattern = (patternName, stepsList) => {
   }
   patterns[patternName] = patternToAdd;
   localStorage.setItem("patterns", JSON.stringify(patterns));
-
+  patternToDraw = null;
   drawSequencer();
   console.log("drew sequencer")
+}
+const deletePattern = (patternToDelete) => {
+  delete patterns[patternToDelete]
+  localStorage.setItem("patterns", JSON.stringify(patterns));
+  patternToDraw = null;
+  drawSequencer();
 }
 
