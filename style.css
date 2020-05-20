@@ -50,6 +50,18 @@ input[type="number"]::-webkit-outer-spin-button {
   margin: 0;
 }
 
+input[type=range][orient=vertical] {
+  -webkit-writing-mode: bt-lr;
+      -ms-writing-mode: bt-lr;
+          writing-mode: bt-lr;
+  /* IE */
+  -webkit-appearance: slider-vertical;
+  /* WebKit */
+  width: 8px;
+  height: 175px;
+  padding: 0 5px;
+}
+
 .sequencer__head {
   max-width: 17vw;
   margin-left: auto;
@@ -76,5 +88,11 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .effect-visuals {
   display: block;
+}
+
+.drawbars {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
 }
 /*# sourceMappingURL=style.css.map */

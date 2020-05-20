@@ -8,16 +8,22 @@ const filterFrequencyInput = document.querySelector("#filterFrequencyInput");
 const filterFrequencyVisual = document.querySelector("#filterFrequencyVisual");
 const filterQInput = document.querySelector("#filterQInput");
 const filterQVisual = document.querySelector("#filterQVisual");
+const delayTimeInput = document.querySelector("#delayTimeInput");
+const delayTimeVisual = document.querySelector("#delayTimeVisual");
+const delayFeedbackInput = document.querySelector("#delayFeedbackInput");
+const delayFeedbackVisual = document.querySelector("#delayFeedbackVisual");
 
 let sequencerIsPlaying = false;
+let toneIsPlaying = false;
 let patternToDraw = null;
 
 const firstStepIndex = 0;
 const lastStepIndex = 15;
 
 const ctx = new (window.AudioContext || window.webkitAudioContext)();
-let synthDelay = ctx.createDelay();
-synthDelay.delayTime.setValueAtTime(0.2, ctx.currentTime);
+const synthDelay = ctx.createDelay(5.0);
+let delayTimeValue = 0.1;
+
 let stepIndex = 0;
 let osc1;
 let osc2;
@@ -37,6 +43,13 @@ const _gainNode = ctx.createGain();
 let volume = 0.1;
 _gainNode.gain.value = volume;
 volumeVisual.innerHTML = volume * 10;
+
+const delayGainNode = ctx.createGain();
+let delayFeedback = 0.1;
+delayGainNode.gain.value = delayFeedback;
+delayFeedbackVisual.innerHTML = delayFeedback * 10;
+
+
 
 let bpm = 120;
 const minuteInMs = 60000;
@@ -187,11 +200,201 @@ function setPatternValues() {
   }
 }
 
+bpmInput.addEventListener("input", (e) => {
+  bpm = parseInt(e.target.value);
+  bpmVisual.innerHTML = bpm;
+})
+volumeInput.addEventListener("input", (e) => {
+  volume = parseFloat(e.target.value) / 100;
+  volumeVisual.innerHTML = parseFloat(e.target.value);
+})
+filterFrequencyInput.addEventListener("input", (e) => {
+  filterFrequency = parseInt(e.target.value);
+  filterFrequencyVisual.innerHTML = filterFrequency;
+})
+filterQInput.addEventListener("input", (e) => {
+  filterQValue = parseInt(e.target.value);
+  filterQVisual.innerHTML = filterQValue;
+})
+delayFeedbackInput.addEventListener('input', (e) => {
+  delayFeedback = parseFloat(e.target.value) / 100;
+  delayFeedbackVisual.innerHTML = parseFloat(e.target.value);
+})
+let delay1;
+
+delayTimeInput.addEventListener("input", (e) => {
+  delayTimeValue = parseFloat(e.target.value);
+  delayTimeVisual.innerHTML = parseFloat(e.target.value);
+})
+
+
+
+function runSequencer() {
+  console.log(stepIndex)
+  // console.log(ctx.state)
+  console.log(toneIsPlaying);
+  let steps = document.querySelectorAll(".sequencer__step");
+  let toneDuration = getBpm();
+  let myTimeout = setTimeout(function () {
+    if (sequencerIsPlaying !== true) {
+      let previousStep = stepIndex - 1;
+      stepIndex === 0 ? previousStep = lastStepIndex : null;
+      steps[previousStep].classList.remove('selected-step')
+      stepIndex = 0;
+      clearTimeout(myTimeout);
+    } else {
+      if (stepIndex === lastStepIndex) {
+        let previousStep = stepIndex - 1;
+        console.log(steps[previousStep].firstChild.value)
+        if (steps[stepIndex].firstChild.value !== "-->" && steps[previousStep].firstChild.value !== "") {
+          if (toneIsPlaying) {
+            stopNote();
+          }
+        }
+        steps[previousStep].classList.remove('selected-step');
+        steps[stepIndex].classList.add('selected-step');
+        let selectedTone = steps[stepIndex].firstChild.value;
+        let selectedOctave = parseFloat(steps[stepIndex].lastChild.value);
+        getTone(tones, selectedTone, selectedOctave);
+        stepIndex = 0;
+        // stepIndex++;
+      } else {
+        if (stepIndex > 0) {
+          let previousStep = stepIndex - 1;
+          console.log(steps[previousStep].firstChild.value)
+          if (steps[stepIndex].firstChild.value !== "-->" && steps[previousStep].firstChild.value !== "") {
+            if (toneIsPlaying) {
+              stopNote();
+            }
+          }
+          steps[previousStep].classList.remove('selected-step');
+        } else {
+          if (steps[stepIndex].firstChild.value !== "-->") {
+            if (steps[lastStepIndex].firstChild.value !== "") {
+              if (toneIsPlaying) {
+                stopNote();
+              }
+            }
+
+          }
+          steps[lastStepIndex].classList.remove('selected-step');
+        }
+        steps[stepIndex].classList.add('selected-step');
+        let selectedTone = steps[stepIndex].firstChild.value;
+        let selectedOctave = parseFloat(steps[stepIndex].lastChild.value);
+        getTone(tones, selectedTone, selectedOctave);
+        stepIndex++;
+      }
+      runSequencer();
+    }
+  }, toneDuration);
+}
+
+const getTone = (data, selectedTone, selectedOctave) => {
+  let [chosenTone] = data.filter(tone => {
+    return tone.toneName == selectedTone;
+  });
+  if (typeof chosenTone !== "undefined") {
+    playNote(chosenTone, selectedOctave);
+  }
+};
+
+function playNote(chosenTone, octave) {
+  if (ctx.state !== "running") {
+    ctx.resume()
+  }
+  let toneFrequency = chosenTone["freq"] * Math.pow(2, (octave - 1));
+  let osc1Wave = document.querySelector("input[name=osc1_waves]:checked").value;
+  osc1 = ctx.createOscillator();
+  osc1.type = osc1Wave;
+  osc1.frequency.value = toneFrequency;
+
+  let osc2Wave = document.querySelector("input[name=osc2_waves]:checked").value;
+  osc2 = ctx.createOscillator();
+  osc2.type = osc2Wave;
+  osc2.frequency.value = toneFrequency;
+  osc2.detune.value = 10;
+
+  _gainNode.gain.value = volume;
+
+  filter.frequency.value = filterFrequency
+  filter.Q.value = filterQValue;
+  synthDelay.delayTime.value = delayTimeValue;
+  delayGainNode.gain.value = delayFeedback;
+
+  osc1.connect(synthDelay);
+  osc2.connect(synthDelay);
+  synthDelay.connect(delayGainNode);
+  osc1.connect(filter);
+  osc1.connect(filter)
+  filter.connect(_gainNode);
+  delayGainNode.connect(_gainNode);
+
+  _gainNode.connect(ctx.destination);
+  osc1.start(0);
+  osc2.start(0);
+  toneIsPlaying = true;
+}
+
+const getBpm = () => {
+  let bpmInMs = minuteInMs / bpm;
+  let sixteenthNoteDuration = bpmInMs / 4;
+  return sixteenthNoteDuration;
+}
+
+const stopNote = () => {
+  console.log("trying to stop")
+  if (typeof osc1 !== "undefined" && typeof osc2 !== "undefined") {
+    osc1.stop(ctx.currentTime)
+    osc2.stop(ctx.currentTime)
+    toneIsPlaying = false;
+  }
+}
+
+const disconnectEffects = () => {
+  if (typeof osc1 !== "undefined" && typeof osc2 !== "undefined") {
+    synthDelay.delayTime.value = delayTimeValue;
+    osc1.disconnect(0)
+    osc2.disconnect(0);
+    filter.disconnect(0);
+    synthDelay.disconnect(0);
+    _gainNode.disconnect(0);
+    ctx.suspend();
+  }
+}
+
+const savePattern = (patternName, stepsList) => {
+  let patternToAdd = {};
+  for (let i = 0; i < stepsList.length; i++) {
+    let toneToAdd = stepsList[i].firstChild.value;
+    let octaveToAdd = stepsList[i].lastChild.value
+    let stepName = i < 10 ? "step0" + i : "step" + i;
+    patternToAdd = {
+      ...patternToAdd,
+      [stepName]: {
+        toneName: toneToAdd,
+        octave: octaveToAdd
+      }
+    }
+  }
+  patterns[patternName] = patternToAdd;
+  localStorage.setItem("patterns", JSON.stringify(patterns));
+  patternToDraw = null;
+  drawSequencer();
+}
+const deletePattern = (patternToDelete) => {
+  delete patterns[patternToDelete]
+  localStorage.setItem("patterns", JSON.stringify(patterns));
+  patternToDraw = null;
+  drawSequencer();
+}
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("play-btn")) {
     if (sequencerIsPlaying == false) {
       sequencerIsPlaying = true;
-      ctx.resume();
+      if (ctx.state === "suspended") {
+        ctx.resume();
+      }
 
       runSequencer();
     }
@@ -200,11 +403,12 @@ document.addEventListener("click", (e) => {
     }
   }
 })
+
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("stop-btn")) {
     if (sequencerIsPlaying == true) {
       sequencerIsPlaying = false;
-      stopNote();
+      // stopNote();
       disconnectEffects();
     }
     else {
@@ -243,148 +447,13 @@ document.addEventListener("change", (e) => {
     drawSequencer();
   }
 })
-bpmInput.addEventListener("input", (e) => {
-  bpm = parseInt(e.target.value);
-  bpmVisual.innerHTML = bpm;
-})
-volumeInput.addEventListener("input", (e) => {
-  volume = parseFloat(e.target.value) / 100;
-  volumeVisual.innerHTML = parseFloat(e.target.value);
-})
-filterFrequencyInput.addEventListener("input", (e) => {
-  filterFrequency = parseInt(e.target.value);
-  filterFrequencyVisual.innerHTML = filterFrequency;
-})
-filterQInput.addEventListener("input", (e) => {
-  filterQValue = parseInt(e.target.value);
-  filterQVisual.innerHTML = filterQValue;
-})
-
-function runSequencer() {
-  let steps = document.querySelectorAll(".sequencer__step");
-  let toneDuration = getBpm();
-  let myTimeout = setTimeout(function () {
-    if (sequencerIsPlaying !== true) {
-      let previousStep = stepIndex - 1;
-      steps[previousStep].classList.remove('selected-step');
-      stepIndex = 0;
-      clearTimeout(myTimeout);
-    } else {
-      if (stepIndex == lastStepIndex) {
-        let previousStep = stepIndex - 1;
-        if (steps[stepIndex].firstChild.value !== "-->") {
-          stopNote();
-        }
-        steps[previousStep].classList.remove('selected-step');
-        steps[stepIndex].classList.add('selected-step');
-        let selectedTone = steps[stepIndex].firstChild.value;
-        let selectedOctave = parseFloat(steps[stepIndex].lastChild.value);
-        getTone(tones, selectedTone, selectedOctave);
-        stepIndex = 0;
-        // stepIndex++;
-      } else {
-        if (steps[stepIndex].firstChild.value !== "-->") {
-          stopNote();
-        }
-        if (stepIndex > 0) {
-          let previousStep = stepIndex - 1;
-          steps[previousStep].classList.remove('selected-step');
-        }
-        steps[lastStepIndex].classList.remove('selected-step');
-        steps[stepIndex].classList.add('selected-step');
-        let selectedTone = steps[stepIndex].firstChild.value;
-        let selectedOctave = parseFloat(steps[stepIndex].lastChild.value);
-        getTone(tones, selectedTone, selectedOctave);
-        stepIndex++;
-      }
-      runSequencer();
+document.addEventListener('input', (e) => {
+  if (e.target.classList.contains('octave-input')) {
+    if (parseInt(e.target.value) < 1 || e.target.value === "") {
+      e.target.value = 1
     }
-  }, toneDuration);
-}
-
-const getTone = (data, selectedTone, selectedOctave) => {
-  let [chosenTone] = data.filter(tone => {
-    return tone.toneName == selectedTone;
-  });
-  if (typeof chosenTone !== "undefined") {
-    playNote(chosenTone, selectedOctave);
-  }
-};
-
-function playNote(chosenTone, octave) {
-  if (ctx.state !== "running") {
-    ctx.resume()
-  }
-  let toneFrequency = chosenTone["freq"] * Math.pow(2, (octave - 1));
-  let osc1Wave = document.querySelector("input[name=osc1_waves]:checked").value;
-  osc1 = ctx.createOscillator();
-  osc1.type = osc1Wave;
-  osc1.frequency.value = toneFrequency;
-
-  let osc2Wave = document.querySelector("input[name=osc2_waves]:checked").value;
-  osc2 = ctx.createOscillator();
-  osc2.type = osc2Wave;
-  osc2.frequency.value = toneFrequency;
-  osc2.detune.value = 10;
-  _gainNode.gain.value = volume;
-  filter.frequency.value = filterFrequency
-  filter.Q.value = filterQValue;
-
-  osc1.connect(filter);
-  osc2.connect(filter);
-  filter.connect(_gainNode);
-  _gainNode.connect(ctx.destination);
-  osc1.start(0);
-  osc2.start(0);
-}
-
-const getBpm = () => {
-  let bpmInMs = minuteInMs / bpm;
-  let sixteenthNoteDuration = bpmInMs / 4;
-  return sixteenthNoteDuration;
-}
-
-const stopNote = () => {
-  if (typeof osc1 !== "undefined" && typeof osc2 !== "undefined") {
-    osc1.stop(0);
-    osc2.stop(0);
-  }
-}
-
-const disconnectEffects = () => {
-  if (typeof osc1 !== "undefined" && typeof osc2 !== "undefined") {
-    osc1.stop(0);
-    osc2.stop(0);
-    osc1.disconnect(0)
-    osc2.disconnect(0);
-    filter.disconnect(0);
-    _gainNode.disconnect(0);
-  }
-}
-
-const savePattern = (patternName, stepsList) => {
-  let patternToAdd = {};
-  for (let i = 0; i < stepsList.length; i++) {
-    let toneToAdd = stepsList[i].firstChild.value;
-    let octaveToAdd = stepsList[i].lastChild.value
-    let stepName = i < 10 ? "step0" + i : "step" + i;
-    patternToAdd = {
-      ...patternToAdd,
-      [stepName]: {
-        toneName: toneToAdd,
-        octave: octaveToAdd
-      }
+    if (parseInt(e.target.value) > 5) {
+      e.target.value = 5;
     }
   }
-  patterns[patternName] = patternToAdd;
-  localStorage.setItem("patterns", JSON.stringify(patterns));
-  patternToDraw = null;
-  drawSequencer();
-}
-const deletePattern = (patternToDelete) => {
-  delete patterns[patternToDelete]
-  localStorage.setItem("patterns", JSON.stringify(patterns));
-  patternToDraw = null;
-  drawSequencer();
-}
-
+})
