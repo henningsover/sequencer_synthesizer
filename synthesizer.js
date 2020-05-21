@@ -12,6 +12,10 @@ const delayTimeInput = document.querySelector("#delayTimeInput");
 const delayTimeVisual = document.querySelector("#delayTimeVisual");
 const delayFeedbackInput = document.querySelector("#delayFeedbackInput");
 const delayFeedbackVisual = document.querySelector("#delayFeedbackVisual");
+const delayGainInput = document.querySelector("#delayGainInput");
+const delayGainVisual = document.querySelector("#delayGainVisual");
+const oscillatorsGainInput = document.querySelector("#oscillatorsGainInput");
+const oscillatorsGainVisual = document.querySelector("#oscillatorsGainVisual");
 
 let sequencerIsPlaying = false;
 let toneIsPlaying = false;
@@ -21,12 +25,22 @@ const firstStepIndex = 0;
 const lastStepIndex = 15;
 
 const ctx = new (window.AudioContext || window.webkitAudioContext)();
-const synthDelay = ctx.createDelay(5.0);
-let delayTimeValue = 0.1;
+// console.log(ctx.state)
 
 let stepIndex = 0;
 let osc1;
 let osc2;
+
+const masterGainNode = ctx.createGain();
+let volume = 0.1;
+masterGainNode.gain.value = volume;
+volumeVisual.innerHTML = volume * 10;
+
+const oscillatorsGainNode = ctx.createGain();
+let oscillatorsGain = 0.1;
+oscillatorsGainNode.gain.value = oscillatorsGain;
+oscillatorsGainVisual.innerHTML = oscillatorsGain * 10;
+
 
 const filter = ctx.createBiquadFilter();
 let filterFrequency = 1000;
@@ -39,15 +53,17 @@ filterFrequencyVisual.innerHTML = filterFrequency
 filterQInput.value = filterQValue;
 filterQVisual.value = filterQValue;
 
-const _gainNode = ctx.createGain();
-let volume = 0.1;
-_gainNode.gain.value = volume;
-volumeVisual.innerHTML = volume * 10;
-
-const delayGainNode = ctx.createGain();
+const synthDelay = ctx.createDelay(5.0);
+let delayTimeValue = 0.500;
+const delayFeedbackNode = ctx.createGain();
 let delayFeedback = 0.1;
-delayGainNode.gain.value = delayFeedback;
+delayFeedbackNode.gain.value = delayFeedback;
 delayFeedbackVisual.innerHTML = delayFeedback * 10;
+const delayGainNode = ctx.createGain();
+let delayGain = 0;
+delayGainNode.gain.value = delayGain;
+delayGainInput.value = delayGain;
+delayGainVisual.innerHTML = delayGain * 10;
 
 
 
@@ -220,19 +236,26 @@ delayFeedbackInput.addEventListener('input', (e) => {
   delayFeedback = parseFloat(e.target.value) / 100;
   delayFeedbackVisual.innerHTML = parseFloat(e.target.value);
 })
-let delay1;
+delayGainInput.addEventListener('input', (e) => {
+  delayGain = parseFloat(e.target.value) / 100;
+  delayGainVisual.innerHTML = parseFloat(e.target.value);
+})
 
 delayTimeInput.addEventListener("input", (e) => {
   delayTimeValue = parseFloat(e.target.value);
   delayTimeVisual.innerHTML = parseFloat(e.target.value);
 })
+oscillatorsGainInput.addEventListener('input', (e) => {
+  oscillatorsGain = parseFloat(e.target.value) / 100;
+  oscillatorsGainVisual.innerHTML = parseFloat(e.target.value);
+})
 
 
 
 function runSequencer() {
-  console.log(stepIndex)
+  // console.log(stepIndex)
   // console.log(ctx.state)
-  console.log(toneIsPlaying);
+  // console.log(toneIsPlaying);
   let steps = document.querySelectorAll(".sequencer__step");
   let toneDuration = getBpm();
   let myTimeout = setTimeout(function () {
@@ -245,7 +268,7 @@ function runSequencer() {
     } else {
       if (stepIndex === lastStepIndex) {
         let previousStep = stepIndex - 1;
-        console.log(steps[previousStep].firstChild.value)
+        // console.log(steps[previousStep].firstChild.value)
         if (steps[stepIndex].firstChild.value !== "-->" && steps[previousStep].firstChild.value !== "") {
           if (toneIsPlaying) {
             stopNote();
@@ -261,7 +284,7 @@ function runSequencer() {
       } else {
         if (stepIndex > 0) {
           let previousStep = stepIndex - 1;
-          console.log(steps[previousStep].firstChild.value)
+          // console.log(steps[previousStep].firstChild.value)
           if (steps[stepIndex].firstChild.value !== "-->" && steps[previousStep].firstChild.value !== "") {
             if (toneIsPlaying) {
               stopNote();
@@ -315,22 +338,29 @@ function playNote(chosenTone, octave) {
   osc2.frequency.value = toneFrequency;
   osc2.detune.value = 10;
 
-  _gainNode.gain.value = volume;
+  masterGainNode.gain.value = volume;
 
   filter.frequency.value = filterFrequency
   filter.Q.value = filterQValue;
   synthDelay.delayTime.value = delayTimeValue;
-  delayGainNode.gain.value = delayFeedback;
+  delayFeedbackNode.gain.value = delayFeedback;
+  delayGainNode.gain.value = delayGain;
+  oscillatorsGainNode.gain.value = oscillatorsGain;
 
   osc1.connect(synthDelay);
   osc2.connect(synthDelay);
+  // oscillatorsGainNode.connect(synthDelay);
+  synthDelay.connect(delayFeedbackNode);
+  delayFeedbackNode.connect(synthDelay);
   synthDelay.connect(delayGainNode);
-  osc1.connect(filter);
-  osc1.connect(filter)
-  filter.connect(_gainNode);
-  delayGainNode.connect(_gainNode);
+  osc1.connect(oscillatorsGainNode);
+  osc2.connect(oscillatorsGainNode);
+  oscillatorsGainNode.connect(filter);
+  delayGainNode.connect(filter)
+  filter.connect(masterGainNode);
+  // delayFeedbackNode.connect(masterGainNode);
 
-  _gainNode.connect(ctx.destination);
+  masterGainNode.connect(ctx.destination);
   osc1.start(0);
   osc2.start(0);
   toneIsPlaying = true;
@@ -343,23 +373,27 @@ const getBpm = () => {
 }
 
 const stopNote = () => {
-  console.log("trying to stop")
+  // console.log("trying to stop")
   if (typeof osc1 !== "undefined" && typeof osc2 !== "undefined") {
     osc1.stop(ctx.currentTime)
     osc2.stop(ctx.currentTime)
     toneIsPlaying = false;
   }
 }
-
+let fadeOut;
 const disconnectEffects = () => {
   if (typeof osc1 !== "undefined" && typeof osc2 !== "undefined") {
     synthDelay.delayTime.value = delayTimeValue;
     osc1.disconnect(0)
     osc2.disconnect(0);
-    filter.disconnect(0);
-    synthDelay.disconnect(0);
-    _gainNode.disconnect(0);
-    ctx.suspend();
+    fadeOut = setTimeout(function () {
+      // console.log(typeof fadeOut)
+      // console.log("disconnecting")
+      filter.disconnect(0);
+      synthDelay.disconnect(0);
+      masterGainNode.disconnect(0);
+      ctx.suspend();
+    }, 3000);
   }
 }
 
@@ -379,7 +413,7 @@ const savePattern = (patternName, stepsList) => {
   }
   patterns[patternName] = patternToAdd;
   localStorage.setItem("patterns", JSON.stringify(patterns));
-  patternToDraw = null;
+  patternToDraw = patternName;
   drawSequencer();
 }
 const deletePattern = (patternToDelete) => {
@@ -394,12 +428,17 @@ document.addEventListener("click", (e) => {
       sequencerIsPlaying = true;
       if (ctx.state === "suspended") {
         ctx.resume();
+      } else {
+        if (typeof fadeOut !== "undefined") {
+          // console.log("clearing fadeout")
+          clearTimeout(fadeOut);
+        }
       }
 
       runSequencer();
     }
     else {
-      console.log('not working');
+      // console.log('not working');
     }
   }
 })
@@ -412,7 +451,7 @@ document.addEventListener("click", (e) => {
       disconnectEffects();
     }
     else {
-      console.log('playing');
+      // console.log('playing');
     }
   }
 })
