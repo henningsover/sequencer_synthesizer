@@ -44,19 +44,22 @@ oscillatorsGainVisual.innerHTML = oscillatorsGain * 10;
 
 const filter = ctx.createBiquadFilter();
 let filterFrequency = 1000;
-let filterQValue = 10;
+let filterQValue = 0;
 filter.type = "lowpass";
 filter.frequency.value = filterFrequency;
 filter.Q.value = filterQValue
 filterFrequencyInput.value = filterFrequency
 filterFrequencyVisual.innerHTML = filterFrequency
 filterQInput.value = filterQValue;
-filterQVisual.value = filterQValue;
+filterQVisual.innerHTML = filterQValue;
 
 const synthDelay = ctx.createDelay(5.0);
-let delayTimeValue = 0.500;
+let delayTimeValue = 0;
+synthDelay.delayTime.value = delayTimeValue;
+delayTimeVisual.innerHTML = delayTimeValue;
+delayTimeInput.value = delayTimeValue;
 const delayFeedbackNode = ctx.createGain();
-let delayFeedback = 0.1;
+let delayFeedback = 0;
 delayFeedbackNode.gain.value = delayFeedback;
 delayFeedbackVisual.innerHTML = delayFeedback * 10;
 const delayGainNode = ctx.createGain();
@@ -219,6 +222,7 @@ function setPatternValues() {
 bpmInput.addEventListener("input", (e) => {
   bpm = parseInt(e.target.value);
   bpmVisual.innerHTML = bpm;
+  setDelayTime();
 })
 volumeInput.addEventListener("input", (e) => {
   volume = parseFloat(e.target.value) / 100;
@@ -242,8 +246,7 @@ delayGainInput.addEventListener('input', (e) => {
 })
 
 delayTimeInput.addEventListener("input", (e) => {
-  delayTimeValue = parseFloat(e.target.value);
-  delayTimeVisual.innerHTML = parseFloat(e.target.value);
+  setDelayTime();
 })
 oscillatorsGainInput.addEventListener('input', (e) => {
   oscillatorsGain = parseFloat(e.target.value) / 100;
@@ -370,6 +373,38 @@ const getBpm = () => {
   let bpmInMs = minuteInMs / bpm;
   let sixteenthNoteDuration = bpmInMs / 4;
   return sixteenthNoteDuration;
+}
+const setDelayTime = () => {
+  let input = parseInt(delayTimeInput.value)
+  console.log(input)
+  let quarterNoteDuration = (minuteInMs / bpm) / 1000;
+  let eightNoteDuration = quarterNoteDuration / 2;
+  let eightNoteTripletDuration = quarterNoteDuration / 3;
+  let sixteenthNoteDuration = eightNoteDuration / 2;
+  if (input === 0) {
+    delayTimeValue = 0;
+    delayTimeVisual.innerHTML = 0;
+
+  } else if (input === 1) {
+    delayTimeValue = sixteenthNoteDuration;
+    console.log(delayTimeValue)
+    delayTimeVisual.innerHTML = "1/16";
+
+  } else if (input === 2) {
+    delayTimeValue = eightNoteTripletDuration;
+    console.log(delayTimeValue)
+    delayTimeVisual.innerHTML = "1/8T";
+
+  } else if (input === 3) {
+    delayTimeValue = eightNoteDuration;
+    console.log(delayTimeValue)
+    delayTimeVisual.innerHTML = "1/8";
+
+  } else if (input === 4) {
+    delayTimeValue = quarterNoteDuration;
+    console.log(delayTimeValue)
+    delayTimeVisual.innerHTML = "1/4";
+  }
 }
 
 const stopNote = () => {

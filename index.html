@@ -4,6 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <title>Document</title>
 </head>
@@ -11,11 +13,10 @@
 <body>
   <section id="synthesizer" class='synth'>
     <div id="settingsBar">
-      <div id="left">
-
-      </div>
-      <div id="right">
-        <h2>Oscillator 1</h2>
+      <div id="oscillators">
+        <div class="osc-header">
+          <h2>OSC 1</h2>
+        </div>
         <form id="osc1_waves" class="oscillator">
           <input type="radio" id="sine" name="osc1_waves" value="sine" />
           <label for="sine">Sine</label>
@@ -26,7 +27,9 @@
           <input type="radio" id="sawtooth" name="osc1_waves" value="sawtooth" checked />
           <label for="sawtooth">Sawtooth</label>
         </form>
-        <h2>Oscillator 2</h2>
+        <div class="osc-header">
+          <h2>OSC 2</h2>
+        </div>
         <form id="osc2_waves" class="oscillator">
           <input type="radio" id="sine" name="osc2_waves" value="sine" />
           <label for="sine">Sine</label>
@@ -37,47 +40,66 @@
           <input type="radio" id="sawtooth" name="osc2_waves" value="sawtooth" checked />
           <label for="sawtooth">Sawtooth</label>
         </form>
-        <div class="drawbars">
-          <div>
-            <label for="filterFrequency">Filter frequency</label>
+      </div>
+      <div class="drawbars">
+        <div class="filter grid drawbars__section">
+          <div class="header">
+            <h3>Filter</h3>
+          </div>
+          <div class="drawbar">
+            <label for="filterFrequency">Freq</label>
             <span id="filterFrequencyVisual" class="effect-visuals"></span>
             <input type="range" orient="vertical" id="filterFrequencyInput" name="filterFrequency" min="1" max="3000">
           </div>
-          <div>
-            <label for="filterQ">Filter Q</label>
+          <div class="drawbar">
+            <label for="filterQ">Q</label>
             <span id="filterQVisual" class="effect-visuals"></span>
             <input type="range" orient="vertical" id="filterQInput" name="filterQ" min="1" max="40">
           </div>
-          <div>
-            <label for="delayTime">Delay time</label>
+        </div>
+        <div class="delay grid drawbars__section">
+          <div class="header">
+            <h3>Delay</h3>
+          </div>
+          <div class="drawbar">
+            <label for="delayTime">Time</label>
             <span id="delayTimeVisual" class="effect-visuals"></span>
-            <input type="range" orient="vertical" id="delayTimeInput" name="filterQ" min="0" max="5" value="0"
-              step="0.1">
+            <input type="range" orient="vertical" id="delayTimeInput" name="filterQ" min="0" max="4" value="0" step="1">
           </div>
-          <div>
-            <label for="delayFeedback">Delay Feedback</label>
+          <div class="drawbar">
+            <label for="delayFeedback">Feedback</label>
             <span id="delayFeedbackVisual" class="effect-visuals"></span>
-            <input type="range" orient="vertical" id="delayFeedbackInput" name="filterQ" min="0" max="50" value="0"
+            <input type="range" orient="vertical" id="delayFeedbackInput" name="filterQ" min="0" max="100" value="0"
               step="0.1">
           </div>
-          <div>
-            <label for="delayGain">Delay gain</label>
+        </div>
+        <div class="gains grid drawbars__section ">
+          <div class="header">
+            <h3>Gain</h3>
+          </div>
+          <div class="drawbar">
+            <label for="delayGain">Delay</label>
             <span id="delayGainVisual" class="effect-visuals"></span>
             <input type="range" orient="vertical" id="delayGainInput" name="filterQ" min="0" max="50" value="0"
               step="0.1">
           </div>
-          <div>
-            <label for="oscillatorsGain">Oscillators gain</label>
+          <div class="drawbar">
+            <label for="oscillatorsGain">Osc</label>
             <span id="oscillatorsGainVisual" class="effect-visuals"></span>
             <input type="range" orient="vertical" id="oscillatorsGainInput" name="filterQ" min="0" max="50" value="0"
               step="0.1">
           </div>
-          <div>
-            <label for="volume">Volume</label>
+          <div class="drawbar">
+            <label for="volume grid drawbars__section">Master</label>
             <span id="volumeVisual" class="effect-visuals"></span>
             <input type="range" orient="vertical" id="volumeInput" name="volume" min="0" max="10">
           </div>
-          <div>
+        </div>
+        <div class="tempo grid drawbars__section">
+          <div class="header">
+            <h3>Tempo</h3>
+          </div>
+          <div class="drawbar">
             <label for="bpm">Bpm</label>
             <span id="bpmVisual" class="effect-visuals"></span>
             <input type="range" orient="vertical" id="bpmInput" name="bpm" min="60" max="190">

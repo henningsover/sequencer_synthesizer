@@ -3,10 +3,14 @@
   margin: 0;
   padding: 0;
 }
+body {
+  font-family: 'Oxanium', cursive;
+  color: white;
+}
 .synth {
   min-width: 500px;
   max-width: 600px;
-  background: blue;
+  background: #333;
   padding: 20px;
   margin: auto;
 }
@@ -47,6 +51,29 @@ input[type=range][orient=vertical]
     width: 8px;
     height: 175px;
     padding: 0 5px;
+    width: 8px; 
+    margin: 5px 0;
+    background: #e8e8e8;
+}
+input[type=range]::-webkit-slider-thumb {
+  box-shadow: 1px 1px 1px #000000;
+  border: 1px solid #000000;
+  height: 50px;
+  width: 26px;
+  border-radius: 5px;
+  background: #FFFFFF;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -21px;
+}
+input[type=range]::-moz-range-thumb {
+  box-shadow: 1px 1px 1px #000000;
+  border: 1px solid #000000;
+  height: 15px;
+  width: 26px;
+  border-radius: 5px;
+  background: #FFFFFF;
+  cursor: pointer;
 }
 
 .sequencer__head {
@@ -65,12 +92,66 @@ margin-bottom: 20px;
   max-width: 23vw;
   display: flex;
   justify-content: space-around;
+  margin: 10px 0;
+}
+.osc-header {
+  padding: 5px;
+  background: rgb(199, 108, 5);
+  max-width: 8em;
 }
 
 .effect-visuals {
   display: block;
+  background: #026002;
+  width: 3em;
+  border: 1px solid black;
+  color: #d9871e;
 }
 
 .drawbars {
   display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  // &__section {
+  //   border: 1px dotted white;
+  // }
+  .grid {
+    display: grid;
+    grid-template-rows: 2em auto;
+    text-align: center;
+    min-width: 80px;
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      grid-row-start: 1;
+      grid-column-start: 1;
+      grid-column-end: -1;
+      background-color: rgb(199, 108, 5);
+      & h3 {
+        vertical-align: middle;
+      }
+    }
+    .drawbar {
+      grid-row-start: 2;
+      text-align: center;
+      min-width: 60px;
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      & label {
+        font-weight: bold;
+      }
+    }
+    &:nth-child(1) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    &:nth-child(2) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    &:nth-child(3) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
 }
