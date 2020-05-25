@@ -6,13 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css"
+    integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
   <link rel="stylesheet" href="style.css">
   <title>Document</title>
 </head>
 
 <body>
-  <section id="synthesizer" class='synth'>
-    <div id="settingsBar">
+  <main id="synthesizer" class='synth'>
+    <section id="synthesizer__settings">
       <div id="oscillators">
         <div class="osc-header">
           <h2>OSC 1</h2>
@@ -45,76 +47,114 @@
         <div class="filter grid drawbars__section">
           <div class="header">
             <h3>Filter</h3>
+            <button class="open">
+              <i class="fas fa-chevron-down"></i>
+            </button>
           </div>
-          <div class="drawbar">
-            <label for="filterFrequency">Freq</label>
-            <span id="filterFrequencyVisual" class="effect-visuals"></span>
-            <input type="range" orient="vertical" id="filterFrequencyInput" name="filterFrequency" min="1" max="3000">
-          </div>
-          <div class="drawbar">
-            <label for="filterQ">Q</label>
-            <span id="filterQVisual" class="effect-visuals"></span>
-            <input type="range" orient="vertical" id="filterQInput" name="filterQ" min="1" max="40">
+          <div class="drawbars__section__wrapper">
+            <div class="drawbar">
+              <label for="filterFrequency">Freq</label>
+              <span id="filterFrequencyVisual" class="effect-visuals"></span>
+              <div class="drawbar__input-wrapper">
+                <input type="range" orient="vertical" class="effect-input" id="filterFrequencyInput"
+                  name="filterFrequency" min="1" max="3000">
+              </div>
+            </div>
+            <div class="drawbar">
+              <label for="filterQ">Q</label>
+              <span id="filterQVisual" class="effect-visuals"></span>
+              <div class="drawbar__input-wrapper">
+                <input type="range" orient="vertical" class="effect-input" id="filterQInput" name="filterQ" min="1"
+                  max="40">
+              </div>
+            </div>
           </div>
         </div>
         <div class="delay grid drawbars__section">
           <div class="header">
             <h3>Delay</h3>
+            <button class="open hidden">
+              <i class="fas fa-chevron-down"></i>
+            </button>
           </div>
-          <div class="drawbar">
-            <label for="delayTime">Time</label>
-            <span id="delayTimeVisual" class="effect-visuals"></span>
-            <input type="range" orient="vertical" id="delayTimeInput" name="filterQ" min="0" max="4" value="0" step="1">
-          </div>
-          <div class="drawbar">
-            <label for="delayFeedback">Feedback</label>
-            <span id="delayFeedbackVisual" class="effect-visuals"></span>
-            <input type="range" orient="vertical" id="delayFeedbackInput" name="filterQ" min="0" max="100" value="0"
-              step="0.1">
+          <div class="drawbars__section__wrapper">
+            <div class="drawbar">
+              <label for="delayTime">Time</label>
+              <span id="delayTimeVisual" class="effect-visuals"></span>
+              <div class="drawbar__input-wrapper">
+                <input type="range" orient="vertical" class="effect-input" id="delayTimeInput" name="filterQ" min="0"
+                  max="4" value="0" step="1">
+              </div>
+            </div>
+            <div class="drawbar">
+              <label for="delayFeedback">Feedback</label>
+              <span id="delayFeedbackVisual" class="effect-visuals"></span>
+              <div class="drawbar__input-wrapper">
+                <input type="range" orient="vertical" class="effect-input" id="delayFeedbackInput" name="filterQ"
+                  min="0" max="100" value="0" step="0.1">
+              </div>
+            </div>
           </div>
         </div>
-        <div class="gains grid drawbars__section ">
+        <div class="gains grid drawbars__section">
           <div class="header">
             <h3>Gain</h3>
+            <button class="open hidden">
+              <i class="fas fa-chevron-down"></i>
+            </button>
           </div>
-          <div class="drawbar">
-            <label for="delayGain">Delay</label>
-            <span id="delayGainVisual" class="effect-visuals"></span>
-            <input type="range" orient="vertical" id="delayGainInput" name="filterQ" min="0" max="50" value="0"
-              step="0.1">
-          </div>
-          <div class="drawbar">
-            <label for="oscillatorsGain">Osc</label>
-            <span id="oscillatorsGainVisual" class="effect-visuals"></span>
-            <input type="range" orient="vertical" id="oscillatorsGainInput" name="filterQ" min="0" max="50" value="0"
-              step="0.1">
-          </div>
-          <div class="drawbar">
-            <label for="volume grid drawbars__section">Master</label>
-            <span id="volumeVisual" class="effect-visuals"></span>
-            <input type="range" orient="vertical" id="volumeInput" name="volume" min="0" max="10">
+          <div class="drawbars__section__wrapper">
+            <div class="drawbar">
+              <label for="delayGain">Delay</label>
+              <span id="delayGainVisual" class="effect-visuals"></span>
+              <div class="drawbar__input-wrapper">
+                <input type="range" orient="vertical" class="effect-input" id="delayGainInput" name="filterQ" min="0"
+                  max="50" value="0" step="0.1">
+              </div>
+            </div>
+            <div class="drawbar">
+              <label for="oscillatorsGain">Osc</label>
+              <span id="oscillatorsGainVisual" class="effect-visuals"></span>
+              <div class="drawbar__input-wrapper">
+                <input type="range" orient="vertical" class="effect-input" id="oscillatorsGainInput" name="filterQ"
+                  min="0" max="50" value="0" step="0.1">
+              </div>
+            </div>
+            <div class="drawbar">
+              <label for="volume grid drawbars__section">Master</label>
+              <span id="volumeVisual" class="effect-visuals"></span>
+              <div class="drawbar__input-wrapper">
+                <input type="range" orient="vertical" class="effect-input" id="volumeInput" name="volume" min="0"
+                  max="10">
+              </div>
+            </div>
           </div>
         </div>
         <div class="tempo grid drawbars__section">
           <div class="header">
             <h3>Tempo</h3>
+            <button class="open hidden">
+              <i class="fas fa-chevron-down"></i>
+            </button>
           </div>
-          <div class="drawbar">
-            <label for="bpm">Bpm</label>
-            <span id="bpmVisual" class="effect-visuals"></span>
-            <input type="range" orient="vertical" id="bpmInput" name="bpm" min="60" max="190">
+          <div class="drawbars__section__wrapper">
+            <div class="drawbar">
+              <label for="bpm">Bpm</label>
+              <span id="bpmVisual" class="effect-visuals"></span>
+              <div class="drawbar__input-wrapper">
+                <input type="range" orient="vertical" class="effect-input" id="bpmInput" name="bpm" min="60" max="190">
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <button id="playBtn" class="play-btn">
-      Play
-    </button>
+    </section>
+    <button id="playBtn" class="play-btn">Play</button>
     <button id="stopBtn" class="stop-btn">Stop</button>
-    <div id="sequencerWrapper" class="sequencer-wrapper">
+    <section id="sequencer" class="sequencer">
 
-    </div>
-  </section>
+    </section>
+  </main>
   <script src="tones.js"></script>
   <script src="synthesizer.js"></script>
 </body>

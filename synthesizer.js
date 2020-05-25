@@ -1,4 +1,4 @@
-const sequencerWrapper = document.querySelector("#sequencerWrapper");
+const sequencer = document.querySelector("#sequencer");
 const playBtn = document.querySelector("#playBtn");
 const bpmInput = document.querySelector("#bpmInput");
 const bpmVisual = document.querySelector("#bpmVisual");
@@ -96,8 +96,8 @@ function drawSequencer() {
   // if ()
   // // let oldSequencer = document.getElementById(sequencer);
   // // console.log(oldSequencer);
-  // // sequencerWrapper.removeChild(oldSequencer)
-  sequencerWrapper.innerHTML = "";
+  // // sequencer.removeChild(oldSequencer)
+  sequencer.innerHTML = "";
   let sequencerHead = document.createElement("div");
   sequencerHead.setAttribute("id", "sequencerHead");
   sequencerHead.classList.add("sequencer__head");
@@ -134,7 +134,7 @@ function drawSequencer() {
 
   sequencerHead.appendChild(patternSelect);
   sequencerHead.appendChild(createNewBtn);
-  sequencerWrapper.appendChild(sequencerHead);
+  sequencer.appendChild(sequencerHead);
 
   let patternNameInput = document.createElement('input');
   patternNameInput.setAttribute('name', "patternNameInput");
@@ -143,18 +143,18 @@ function drawSequencer() {
   if (patternToDraw !== null) {
     patternNameInput.value = patternToDraw;
   }
-  sequencerWrapper.appendChild(patternNameInput);
+  sequencer.appendChild(patternNameInput);
 
 
-  let sequencer = document.createElement('div');
-  sequencer.classList.add("sequencer");
-  sequencer.setAttribute("id", "sequencer");
+  let sequencerWrapper = document.createElement('div');
+  sequencerWrapper.classList.add("sequencer__wrapper");
+  sequencerWrapper.setAttribute("id", "sequencerWrapper");
 
   for (let i = 0; i < 16; i++) {
     let stepWrapper = document.createElement("div");
     stepWrapper.setAttribute('id', `stepWrapper${i}`);
     stepWrapper.setAttribute('name', `stepWrapper${i}`);
-    stepWrapper.classList.add('sequencer__step');
+    stepWrapper.classList.add('sequencer__wrapper__step');
     let toneSelect = document.createElement("select");
     toneSelect.setAttribute('id', `toneSelect${i}`);
     toneSelect.classList.add("tone-select");
@@ -183,9 +183,9 @@ function drawSequencer() {
     octaveInput.classList.add("octave-input");
     stepWrapper.appendChild(toneSelect);
     stepWrapper.appendChild(octaveInput)
-    sequencer.appendChild(stepWrapper);
+    sequencerWrapper.appendChild(stepWrapper);
   }
-  sequencerWrapper.appendChild(sequencer);
+  sequencer.appendChild(sequencerWrapper);
   let managePatternsBtns = document.createElement('div');
   managePatternsBtns.classList.add('manage-pattern-btns');
 
@@ -197,7 +197,7 @@ function drawSequencer() {
   delBtn.innerHTML = "Delete";
   managePatternsBtns.appendChild(saveBtn);
   managePatternsBtns.appendChild(delBtn);
-  sequencerWrapper.appendChild(managePatternsBtns);
+  sequencer.appendChild(managePatternsBtns);
   if (patternToDraw !== null) {
     setPatternValues();
   }
@@ -205,12 +205,15 @@ function drawSequencer() {
 drawSequencer();
 
 function setPatternValues() {
-  let steps = document.querySelectorAll(".sequencer__step");
+  let steps = document.querySelectorAll(".sequencer__wrapper__step");
+  console.log(patternToDraw)
   if (patternToDraw !== null) {
     for (let i = 0; i < steps.length; i++) {
+      console.log(steps[i].firstChild)
       let toneSelect = steps[i].firstChild;
       let octaveInput = steps[i].lastChild;
       let stepName = i < 10 ? "step0" + i : "step" + i;
+      console.log(patterns[patternToDraw][stepName].toneName)
       toneNameToSet = patterns[patternToDraw][stepName].toneName
       octaveToSet = patterns[patternToDraw][stepName].octave
       toneSelect.value = toneNameToSet;
@@ -259,7 +262,7 @@ function runSequencer() {
   // console.log(stepIndex)
   // console.log(ctx.state)
   // console.log(toneIsPlaying);
-  let steps = document.querySelectorAll(".sequencer__step");
+  let steps = document.querySelectorAll(".sequencer__wrapper__step");
   let toneDuration = getBpm();
   let myTimeout = setTimeout(function () {
     if (sequencerIsPlaying !== true) {
@@ -531,3 +534,33 @@ document.addEventListener('input', (e) => {
     }
   }
 })
+// const displayMe = () => {
+//   console.log(this);
+// }
+
+const openBtns = document.querySelectorAll('.open')
+// headers.forEach(header => header.addEventListener('click', displayMe(this)));
+
+// function displayMe(header) {
+//   console.log(header)
+// }
+// console.log(headers);
+
+openBtns.forEach(btn => {
+  btn.addEventListener("click", function (e) {
+    let viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    if (viewportWidth < 550) {
+      let effectToHide = e.target.parentNode.nextElementSibling
+      effectToHide.classList.toggle("hidden");
+    }
+  })
+});
+window.addEventListener("orientationchange", function () {
+  let viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+  if (viewportWidth < 550) {
+    let effectToHide = e.target.parentNode.parentNode.nextElementSibling
+    effectToHide.classList.add("hidden");
+  } else {
+    effectToHide.classList.remove("hidden");
+  }
+});
