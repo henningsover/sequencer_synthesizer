@@ -37,11 +37,11 @@ body {
       padding: 5px;
       background: #c76c05;
       border-top-left-radius: 10px;
-      font-size: 1.6em;
+      font-size: 1.8em;
       border-right: 3px solid #7b4c03;
       border-bottom: 3px solid #73340e;
-      flex-grow: 1;
-      max-width: 150px;
+      // flex-grow: 1;
+      max-width: 160px;
     }
     &__patterns {
       max-width: 120px;
@@ -51,6 +51,10 @@ body {
         display: flex;
         height: 1em;
         justify-content: space-between; 
+      }
+      .pattern-select {
+        min-width: 100px;
+        margin-bottom: 9px;
       }
     }
   }
@@ -102,13 +106,14 @@ body {
   justify-content: space-around;
   align-items: center;
   width: 100%;
+  margin-top: 5px;
   &__input {
     -moz-appearance: textfield;
   -webkit-appearance: textfield;
   width: 15px;
   border: 0;
     text-align: center;
-    height: 1.5em;
+    height: 2em;
     background: #0b5f0d;
     color: #d7862e;
     font-family: inherit; 
@@ -116,7 +121,7 @@ body {
   }
   .qty-btns {
     border: 0;
-    height: 1.5em;
+    height: 2em;
     width: 15px;
     background: black;
     color: white;
@@ -161,9 +166,7 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
 }
 
-.pattern-select {
-  min-width: 100px;
-}
+
 
 .oscillator {
   max-width: 400px;
@@ -205,8 +208,8 @@ input[type="range"]::-moz-range-thumb {
       justify-content: center;
       transition: visibility 1s linear;
       @media(min-width: 550px) {
-        border-left: 1px dotted white;
-        border-right: 1px dotted white;
+        border-left: 1px solid rgb(189, 188, 188);
+        border-right: 1px solid rgb(189, 188, 188);
       }
     }
     .header {
