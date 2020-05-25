@@ -368,7 +368,6 @@ function playNote(chosenTone, octave) {
     ctx.resume()
   }
   let toneFrequency = chosenTone["freq"] * Math.pow(2, (octave - 1));
-  console.log(toneFrequency)
   let osc1Wave = document.querySelector("input[name=osc1_waves]:checked").value;
   osc1 = ctx.createOscillator();
   osc1.type = osc1Wave;
@@ -415,7 +414,6 @@ const getBpm = () => {
 }
 const setDelayTime = () => {
   let input = parseInt(delayTimeInput.value)
-  console.log(input)
   let quarterNoteDuration = (minuteInMs / bpm) / 1000;
   let eightNoteDuration = quarterNoteDuration / 2;
   let eightNoteTripletDuration = quarterNoteDuration / 3;
@@ -426,22 +424,18 @@ const setDelayTime = () => {
 
   } else if (input === 1) {
     delayTimeValue = sixteenthNoteDuration;
-    console.log(delayTimeValue)
     delayTimeVisual.innerHTML = "1/16";
 
   } else if (input === 2) {
     delayTimeValue = eightNoteTripletDuration;
-    console.log(delayTimeValue)
     delayTimeVisual.innerHTML = "1/8T";
 
   } else if (input === 3) {
     delayTimeValue = eightNoteDuration;
-    console.log(delayTimeValue)
     delayTimeVisual.innerHTML = "1/8";
 
   } else if (input === 4) {
     delayTimeValue = quarterNoteDuration;
-    console.log(delayTimeValue)
     delayTimeVisual.innerHTML = "1/4";
   }
 }
@@ -475,7 +469,7 @@ const savePattern = (patternName, stepsList) => {
   let patternToAdd = {};
   for (let i = 0; i < stepsList.length; i++) {
     let toneToAdd = stepsList[i].firstChild.value;
-    let octaveToAdd = stepsList[i].lastChild.value
+    let octaveToAdd = stepsList[i].lastChild.children[1].value
     let stepName = i < 10 ? "step0" + i : "step" + i;
     patternToAdd = {
       ...patternToAdd,
