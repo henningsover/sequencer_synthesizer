@@ -101,6 +101,10 @@ function drawSequencer() {
   sequencerHead.setAttribute("id", "sequencerHead");
   sequencerHead.classList.add("sequencer__head");
 
+  let sequencerHeading = document.createElement('h3');
+  sequencerHeading.classList.add('sequencer__head__heading');
+  sequencerHeading.innerHTML = "Sequencer";
+
   let patternSelect = document.createElement('select');
   patternSelect.setAttribute('name', "patternSelect");
   patternSelect.setAttribute('id', "patternSelect");
@@ -130,10 +134,13 @@ function drawSequencer() {
 
     drawSequencer();
   })
-
+  sequencerHead.appendChild(sequencerHeading);
   sequencerHead.appendChild(patternSelect);
   sequencerHead.appendChild(createNewBtn);
   sequencer.appendChild(sequencerHead);
+
+  let namePlay = document.createElement('div');
+  namePlay.classList.add('name-and-play');
 
   let patternNameInput = document.createElement('input');
   patternNameInput.setAttribute('name', "patternNameInput");
@@ -142,7 +149,23 @@ function drawSequencer() {
   if (patternToDraw !== null) {
     patternNameInput.value = patternToDraw;
   }
-  sequencer.appendChild(patternNameInput);
+  let startStop = document.createElement('div');
+  startStop.classList.add('start-stop-btns');
+  let playBtn = document.createElement('button');
+  playBtn.setAttribute('id', 'playBtn');
+  playBtn.classList.add('play-btn');
+  playBtn.innerHTML = "Play";
+  let stopBtn = document.createElement('button');
+  stopBtn.setAttribute('id', 'stopBtn');
+  stopBtn.classList.add('stop-btn');
+  stopBtn.innerHTML = "Stop";
+
+  startStop.appendChild(playBtn);
+  startStop.appendChild(stopBtn);
+
+  namePlay.appendChild(patternNameInput);
+  namePlay.appendChild(startStop);
+  sequencer.appendChild(namePlay);
 
 
   let sequencerWrapper = document.createElement('div');
@@ -172,6 +195,8 @@ function drawSequencer() {
       option.innerHTML = tone.toneName;
       toneSelect.appendChild(option);
     });
+    let octaveWrapper = document.createElement('div');
+    octaveWrapper.classList.add('octave');
     let octaveInput = document.createElement('input');
     octaveInput.setAttribute("type", "number");
     octaveInput.setAttribute("id", `octaveInput${i}`);
@@ -179,9 +204,20 @@ function drawSequencer() {
     octaveInput.setAttribute("min", "1");
     octaveInput.setAttribute("max", "5");
     octaveInput.value = 3;
-    octaveInput.classList.add("octave-input");
+    octaveInput.classList.add("octave__input");
+    let plusBtn = document.createElement('button');
+    plusBtn.classList.add('octave__plus-btn');
+    plusBtn.classList.add('qty-btns');
+    plusBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+    let minusBtn = document.createElement('button');
+    minusBtn.classList.add('octave__minus-btn');
+    minusBtn.classList.add('qty-btns');
+    minusBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
     stepWrapper.appendChild(toneSelect);
-    stepWrapper.appendChild(octaveInput)
+    octaveWrapper.appendChild(minusBtn);
+    octaveWrapper.appendChild(octaveInput);
+    octaveWrapper.appendChild(plusBtn);
+    stepWrapper.appendChild(octaveWrapper);
     sequencerWrapper.appendChild(stepWrapper);
   }
   sequencer.appendChild(sequencerWrapper);
@@ -208,7 +244,7 @@ function setPatternValues() {
   if (patternToDraw !== null) {
     for (let i = 0; i < steps.length; i++) {
       let toneSelect = steps[i].firstChild;
-      let octaveInput = steps[i].lastChild;
+      let octaveInput = steps[i].lastChild.children[1];
       let stepName = i < 10 ? "step0" + i : "step" + i;
       toneNameToSet = patterns[patternToDraw][stepName].toneName
       octaveToSet = patterns[patternToDraw][stepName].octave
@@ -279,7 +315,7 @@ function runSequencer() {
         steps[previousStep].classList.remove('selected-step');
         steps[stepIndex].classList.add('selected-step');
         let selectedTone = steps[stepIndex].firstChild.value;
-        let selectedOctave = parseFloat(steps[stepIndex].lastChild.value);
+        let selectedOctave = parseFloat(steps[stepIndex].lastChild.children[1].value);
         getTone(tones, selectedTone, selectedOctave);
         stepIndex = 0;
         // stepIndex++;
@@ -305,7 +341,7 @@ function runSequencer() {
         }
         steps[stepIndex].classList.add('selected-step');
         let selectedTone = steps[stepIndex].firstChild.value;
-        let selectedOctave = parseFloat(steps[stepIndex].lastChild.value);
+        let selectedOctave = parseFloat(steps[stepIndex].lastChild.children[1].value);
         getTone(tones, selectedTone, selectedOctave);
         stepIndex++;
       }
@@ -328,6 +364,7 @@ function playNote(chosenTone, octave) {
     ctx.resume()
   }
   let toneFrequency = chosenTone["freq"] * Math.pow(2, (octave - 1));
+  console.log(toneFrequency)
   let osc1Wave = document.querySelector("input[name=osc1_waves]:checked").value;
   osc1 = ctx.createOscillator();
   osc1.type = osc1Wave;
@@ -519,12 +556,32 @@ document.addEventListener("change", (e) => {
   }
 })
 document.addEventListener('input', (e) => {
-  if (e.target.classList.contains('octave-input')) {
+  if (e.target.classList.contains('octave__input')) {
     if (parseInt(e.target.value) < 1 || e.target.value === "") {
       e.target.value = 1
     }
     if (parseInt(e.target.value) > 5) {
       e.target.value = 5;
+    }
+  }
+})
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('octave__plus-btn')) {
+    let plusButton = e.target;
+    let input = plusButton.parentNode.children[1];
+
+    if (parseInt(input.value) !== 5) {
+      input.value++;
+    }
+  }
+})
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('octave__minus-btn')) {
+    let minusButton = e.target;
+    let input = minusButton.parentNode.children[1];
+
+    if (parseFloat(input.value) !== 1) {
+      input.value = parseFloat(input.value) - 1;
     }
   }
 })
@@ -547,11 +604,15 @@ const isPortrait = () => {
   return viewportHeight > viewportWidth;
 }
 
+
 const showHideWrappers = () => {
   let effects = document.querySelectorAll(".drawbars__section__wrapper")
+  let viewportWidth = window.innerWidth || document.documentElement.clientWidth;
   effects.forEach(effect => {
     if (isPortrait()) {
-      effect.classList.add("hidden");
+      if (viewportWidth < 550) {
+        effect.classList.add("hidden");
+      }
     } else {
       effect.classList.remove("hidden");
     }
@@ -563,9 +624,17 @@ showHideWrappers();
 openBtns.forEach(btn => {
   btn.addEventListener("click", function (e) {
     if (isPortrait()) {
-      let effectToHide = e.target.parentNode.nextElementSibling
-      effectToHide.classList.toggle("hidden");
+      let viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+      if (viewportWidth < 550) {
+        let effectToHide = e.target.parentNode.nextElementSibling
+        effectToHide.classList.toggle("hidden");
+      }
     }
   })
 });
 window.addEventListener("resize", showHideWrappers);
+
+let viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+if (isPortrait && viewportWidth < 550) {
+  alert('Turn device to max experience')
+}

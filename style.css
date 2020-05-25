@@ -12,18 +12,27 @@ button > * {
 body {
   font-family: 'Oxanium', cursive;
   color: white;
+  background-color: black;
 }
 
 .synth {
   max-width: 600px;
   background: #333;
+  background-image: url("wood-background.jpg");
+  background-size: contain;
   margin: auto;
+  -webkit-box-shadow: 0px 4px 16px 7px rgba(71, 1, 18, 0.51);
+  box-shadow: 0px 4px 16px 7px rgba(71, 1, 18, 0.51);
 }
 
 @media (min-width: 550px) {
   .synth {
-    padding: 20px;
+    padding: 10px;
   }
+}
+
+.sequencer {
+  margin-top: 10px;
 }
 
 .sequencer__head {
@@ -76,14 +85,64 @@ body {
 }
 
 .sequencer .manage-pattern-btns {
-  width: 100px;
   margin-left: auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  width: 96px;
 }
 
-.octave-input {
+.sequencer .name-and-play {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.sequencer .name-and-play .start-stop-btns {
+  margin-left: auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  width: 80px;
+}
+
+.octave {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+}
+
+.octave__input {
   -moz-appearance: textfield;
   -webkit-appearance: textfield;
-  max-width: 15px;
+  width: 15px;
+  border: 0;
+  text-align: center;
+  height: 1.5em;
+  background: #0b5f0d;
+  color: #d7862e;
+  font-family: inherit;
+  font-weight: bold;
+}
+
+.octave .qty-btns {
+  border: 0;
+  height: 1.5em;
+  width: 15px;
+  background: black;
+  color: white;
 }
 
 input[type="number"]::-webkit-inner-spin-button,
@@ -166,7 +225,7 @@ input[type="range"]::-moz-range-thumb {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
-  margin-top: 20px;
+  margin-top: 10px;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
@@ -298,5 +357,40 @@ input[type="range"]::-moz-range-thumb {
 
 .hidden {
   display: none;
+}
+
+.module {
+  border-top: 3px solid black;
+  border-bottom: 3px solid black;
+  padding: 10px;
+  background: #373737;
+  opacity: 0.95;
+}
+
+.module:nth-child(1) {
+  border-top: 0;
+}
+
+@media (min-width: 550px) {
+  .module:nth-child(1) {
+    border-top: 3px solid black;
+  }
+}
+
+.module:last-child {
+  border-bottom: 0;
+}
+
+@media (min-width: 550px) {
+  .module:last-child {
+    border-bottom: 3px solid black;
+  }
+}
+
+@media (min-width: 550px) {
+  .module {
+    border: 3px solid black;
+    border-radius: 10px;
+  }
 }
 /*# sourceMappingURL=style.css.map */
