@@ -27,11 +27,32 @@ body {
 .sequencer {
   margin-top: 10px;
   &__head {
-    max-width: 240px;
+    // max-width: 240px;
     margin-left: auto;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     margin-bottom: 20px;
+    align-items: end;
+    &__heading {
+      padding: 5px;
+      background: #c76c05;
+      border-top-left-radius: 10px;
+      font-size: 1.6em;
+      border-right: 3px solid #7b4c03;
+      border-bottom: 3px solid #73340e;
+      flex-grow: 1;
+      max-width: 150px;
+    }
+    &__patterns {
+      max-width: 120px;
+      @media (min-width: 550px) {
+        max-width: unset;
+        width: 250px;
+        display: flex;
+        height: 1em;
+        justify-content: space-between; 
+      }
+    }
   }
   &__wrapper {
     display: grid;

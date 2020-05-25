@@ -36,14 +36,48 @@ body {
 }
 
 .sequencer__head {
-  max-width: 240px;
   margin-left: auto;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-pack: distribute;
-      justify-content: space-around;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
   margin-bottom: 20px;
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: end;
+}
+
+.sequencer__head__heading {
+  padding: 5px;
+  background: #c76c05;
+  border-top-left-radius: 10px;
+  font-size: 1.6em;
+  border-right: 3px solid #7b4c03;
+  border-bottom: 3px solid #73340e;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  max-width: 150px;
+}
+
+.sequencer__head__patterns {
+  max-width: 120px;
+}
+
+@media (min-width: 550px) {
+  .sequencer__head__patterns {
+    max-width: unset;
+    width: 250px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    height: 1em;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+  }
 }
 
 .sequencer__wrapper {

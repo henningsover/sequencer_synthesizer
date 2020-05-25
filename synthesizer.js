@@ -105,6 +105,9 @@ function drawSequencer() {
   sequencerHeading.classList.add('sequencer__head__heading');
   sequencerHeading.innerHTML = "Sequencer";
 
+  let patternSelection = document.createElement('div');
+  patternSelection.classList.add('sequencer__head__patterns')
+
   let patternSelect = document.createElement('select');
   patternSelect.setAttribute('name', "patternSelect");
   patternSelect.setAttribute('id', "patternSelect");
@@ -134,9 +137,10 @@ function drawSequencer() {
 
     drawSequencer();
   })
+  patternSelection.appendChild(patternSelect);
+  patternSelection.appendChild(createNewBtn);
   sequencerHead.appendChild(sequencerHeading);
-  sequencerHead.appendChild(patternSelect);
-  sequencerHead.appendChild(createNewBtn);
+  sequencerHead.appendChild(patternSelection);
   sequencer.appendChild(sequencerHead);
 
   let namePlay = document.createElement('div');
