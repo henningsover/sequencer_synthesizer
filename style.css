@@ -125,16 +125,25 @@ body {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-  width: 96px;
+  width: 110px;
+}
+
+.sequencer .manage-pattern-btns .save-btn {
+  width: 50px;
+}
+
+.sequencer .manage-pattern-btns .del-btn {
+  width: 50px;
+  margin-left: 10px;
 }
 
 .sequencer .name-and-play {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 
 .sequencer .name-and-play .start-stop-btns {
@@ -145,7 +154,15 @@ body {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
-  width: 80px;
+}
+
+.sequencer .name-and-play .start-stop-btns .play-btn {
+  width: 50px;
+}
+
+.sequencer .name-and-play .start-stop-btns .stop-btn {
+  margin-left: 10px;
+  width: 50px;
 }
 
 .octave {

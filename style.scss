@@ -87,18 +87,31 @@ body {
   .manage-pattern-btns {
     margin-left: auto;
     display: flex;
-    justify-content: space-between;
-    width: 96px;
+    width: 110px;
+    .save-btn {
+      width: 50px;
+    }
+    .del-btn {
+      width: 50px;
+      margin-left: 10px;
+    }
   }
   .name-and-play {
     display: flex;
+    justify-content: space-between;
     .start-stop-btns {
       margin-left: auto;
       display: flex;
       justify-content: space-between;
-      width: 80px;
-
+      .play-btn{
+        width: 50px;
+      }
+      .stop-btn{
+        margin-left: 10px;
+        width: 50px;
+      }
     }
+
   }
 }
 .octave {
