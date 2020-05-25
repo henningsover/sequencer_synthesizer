@@ -41,7 +41,6 @@ let oscillatorsGain = 0.1;
 oscillatorsGainNode.gain.value = oscillatorsGain;
 oscillatorsGainVisual.innerHTML = oscillatorsGain * 10;
 
-
 const filter = ctx.createBiquadFilter();
 let filterFrequency = 1000;
 let filterQValue = 0;
@@ -206,14 +205,11 @@ drawSequencer();
 
 function setPatternValues() {
   let steps = document.querySelectorAll(".sequencer__wrapper__step");
-  console.log(patternToDraw)
   if (patternToDraw !== null) {
     for (let i = 0; i < steps.length; i++) {
-      console.log(steps[i].firstChild)
       let toneSelect = steps[i].firstChild;
       let octaveInput = steps[i].lastChild;
       let stepName = i < 10 ? "step0" + i : "step" + i;
-      console.log(patterns[patternToDraw][stepName].toneName)
       toneNameToSet = patterns[patternToDraw][stepName].toneName
       octaveToSet = patterns[patternToDraw][stepName].octave
       toneSelect.value = toneNameToSet;
@@ -304,7 +300,6 @@ function runSequencer() {
                 stopNote();
               }
             }
-
           }
           steps[lastStepIndex].classList.remove('selected-step');
         }
@@ -472,7 +467,6 @@ document.addEventListener("click", (e) => {
           clearTimeout(fadeOut);
         }
       }
-
       runSequencer();
     }
     else {
@@ -496,7 +490,7 @@ document.addEventListener("click", (e) => {
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains('save-btn')) {
     let patternName = document.querySelector('#patternNameInput').value;
-    let steps = document.querySelectorAll(".sequencer__step");
+    let steps = document.querySelectorAll(".sequencer__wrapper__step");
     if (patternName == "") {
       alert("Please enter a name for this pattern")
     } else if (Object.keys(patterns).includes(patternName)) {
@@ -546,21 +540,32 @@ const openBtns = document.querySelectorAll('.open')
 // }
 // console.log(headers);
 
+const isPortrait = () => {
+  let viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+  let viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+  return viewportHeight > viewportWidth;
+}
+
+const showHideWrappers = () => {
+  let effects = document.querySelectorAll(".drawbars__section__wrapper")
+  effects.forEach(effect => {
+    if (isPortrait()) {
+      effect.classList.add("hidden");
+    } else {
+      effect.classList.remove("hidden");
+    }
+  });
+}
+
+showHideWrappers();
+
 openBtns.forEach(btn => {
   btn.addEventListener("click", function (e) {
-    let viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-    if (viewportWidth < 550) {
+    if (isPortrait()) {
       let effectToHide = e.target.parentNode.nextElementSibling
       effectToHide.classList.toggle("hidden");
     }
   })
 });
-window.addEventListener("orientationchange", function () {
-  let viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-  if (viewportWidth < 550) {
-    let effectToHide = e.target.parentNode.parentNode.nextElementSibling
-    effectToHide.classList.add("hidden");
-  } else {
-    effectToHide.classList.remove("hidden");
-  }
-});
+window.addEventListener("resize", showHideWrappers);
