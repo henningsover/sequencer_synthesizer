@@ -8,38 +8,41 @@
     rel="stylesheet">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css"
     integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="./styles/style.css">
   <title>Document</title>
 </head>
 
 <body>
   <main id="synthesizer" class='synth'>
+    <header class="synth__header">
+      <h1>HenningSynth</h1>
+    </header>
     <section id="synthesizer__settings">
       <div id="oscillators" class="module">
         <div class="osc-header">
           <h2>OSC 1</h2>
         </div>
         <form id="osc1_waves" class="oscillator">
-          <input type="radio" id="sine" name="osc1_waves" value="sine" />
+          <input type="radio" id="sine1" name="osc1_waves" value="sine" />
           <label for="sine">Sine</label>
-          <input type="radio" id="square" name="osc1_waves" value="square" />
+          <input type="radio" id="square1" name="osc1_waves" value="square" />
           <label for="square">Square</label>
-          <input type="radio" id="triangle" name="osc1_waves" value="triangle" />
+          <input type="radio" id="triangle1" name="osc1_waves" value="triangle" />
           <label for="triangle">Triangle</label>
-          <input type="radio" id="sawtooth" name="osc1_waves" value="sawtooth" checked />
+          <input type="radio" id="sawtooth1" name="osc1_waves" value="sawtooth" checked />
           <label for="sawtooth">Sawtooth</label>
         </form>
         <div class="osc-header">
           <h2>OSC 2</h2>
         </div>
         <form id="osc2_waves" class="oscillator">
-          <input type="radio" id="sine" name="osc2_waves" value="sine" />
+          <input type="radio" id="sine2" name="osc2_waves" value="sine" />
           <label for="sine">Sine</label>
-          <input type="radio" id="square" name="osc2_waves" value="square" />
+          <input type="radio" id="square2" name="osc2_waves" value="square" />
           <label for="square">Square</label>
-          <input type="radio" id="triangle" name="osc2_waves" value="triangle" />
+          <input type="radio" id="triangle2" name="osc2_waves" value="triangle" />
           <label for="triangle">Triangle</label>
-          <input type="radio" id="sawtooth" name="osc2_waves" value="sawtooth" checked />
+          <input type="radio" id="sawtooth2" name="osc2_waves" value="sawtooth" checked />
           <label for="sawtooth">Sawtooth</label>
         </form>
       </div>
@@ -149,14 +152,13 @@
         </div>
       </div>
     </section>
-    <!-- <button id="playBtn" class="play-btn">Play</button>
-    <button id="stopBtn" class="stop-btn">Stop</button> -->
     <section id="sequencer" class="sequencer module">
 
     </section>
   </main>
-  <script src="tones.js"></script>
-  <script src="synthesizer.js"></script>
+  <script src="./tones.js"></script>
+  <script src="./presetPatterns.js"></script>
+  <script src="./synthesizer.js"></script>
 </body>
 
 </html>

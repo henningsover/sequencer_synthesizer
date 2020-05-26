@@ -1,0 +1,38 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+button > * {
+  pointer-events: none;
+}
+body {
+  font-family: 'Oxanium', cursive;
+  color: white;
+  background-color: black;
+}
+
+.module {
+  border-top: 3px solid black;
+  border-bottom: 3px solid black;
+  padding: 10px;
+  background: #373737;
+  opacity: 0.95;
+  &:nth-child(1) {
+    border-top: 0;
+    @media(min-width: 550px) {
+      border-top: 3px solid black;
+    }
+
+  }
+  &:last-child {
+    border-bottom: 0;
+    @media(min-width: 550px) {
+      border-bottom: 3px solid black;
+    }
+  }
+  @media(min-width: 550px) {
+    border: 3px solid black;
+    border-radius: 10px;
+  }
+}
