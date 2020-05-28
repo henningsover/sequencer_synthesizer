@@ -1,7 +1,6 @@
 .sequencer {
   margin-top: 10px;
   &__head {
-    // max-width: 240px;
     margin-left: auto;
     display: flex;
     justify-content: space-between;
@@ -14,7 +13,6 @@
       font-size: 1.8em;
       border-right: 3px solid #7b4c03;
       border-bottom: 3px solid #73340e;
-      // flex-grow: 1;
       max-width: 160px;
     }
     &__patterns {
@@ -22,7 +20,6 @@
       text-align: end;
       @media (min-width: 550px) {
         max-width: unset;
-        // width: 250px;
         display: flex;
         height: 1em;
         justify-content: space-between; 
