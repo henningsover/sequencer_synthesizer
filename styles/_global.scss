@@ -6,6 +6,12 @@
 button > * {
   pointer-events: none;
 }
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+}
 body {
   font-family: 'Oxanium', cursive;
   color: white;
