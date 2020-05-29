@@ -65,6 +65,7 @@ const delayFeedbackNode = ctx.createGain();
 let delayFeedback = 0;
 delayFeedbackNode.gain.value = delayFeedback;
 delayFeedbackVisual.innerHTML = delayFeedback * 10;
+delayFeedbackInput.value = delayFeedback * 10;
 const delayGainNode = ctx.createGain();
 let delayGain = 0;
 delayGainNode.gain.value = delayGain;
